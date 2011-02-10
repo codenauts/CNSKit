@@ -27,7 +27,7 @@
 // Get password from Keychain for service and username
 - (NSString *)getPasswordForUsername:(NSString *)username {
 	NSError *error;
-	NSString *password = [CNSKeychainUtils getPasswordForUsername:username serviceName:[[[NSBundle mainBundle] infoDictionary] valueForKey:kCFBundleIdentifierKey] error:&error];
+	NSString *password = [CNSKeychainUtils getPasswordForUsername:username serviceName:[[[NSBundle mainBundle] infoDictionary] valueForKey:(NSString *)kCFBundleIdentifierKey] error:&error];
 	if ([error code] != 0) {
 		CNSLog(@"Error occured while retrieving password: %@", [error userInfo]);
 	}
@@ -37,7 +37,7 @@
 // Set password from Keychain for service and username
 - (void)setPassword:(NSString *)password forUsername:(NSString *)username {
 	NSError *error;
-	if (![CNSKeychainUtils storeUsername:username andPassword:password serviceName:[[[NSBundle mainBundle] infoDictionary] valueForKey:kCFBundleIdentifierKey] updateExisting:true error:&error]) {
+	if (![CNSKeychainUtils storeUsername:username password:password serviceName:[[[NSBundle mainBundle] infoDictionary] valueForKey:(NSString *)kCFBundleIdentifierKey] updateExisting:true error:&error]) {
 		CNSLog(@"Error occured while storing password: %@", [error userInfo]);
 	}
 }

@@ -125,7 +125,7 @@ static NSString *CNSKeychainUtilsErrorDomain = @"CNSKeychainUtilsErrorDomain";
 	}
 	
 	// See if we already have a password entered for these credentials.
-	NSString *existingPassword = [CNSKeychainUtils getPasswordForUsername:username andServiceName:serviceName error:error];
+	NSString *existingPassword = [CNSKeychainUtils getPasswordForUsername:username serviceName:serviceName error:error];
 
 	if (error) {
 		if ([*error code] == -1999) {
@@ -133,7 +133,7 @@ static NSString *CNSKeychainUtilsErrorDomain = @"CNSKeychainUtilsErrorDomain";
 			// Delete the existing item before moving on entering a correct one.
 			*error = nil;
 			
-			[self deleteItemForUsername:username andServiceName:serviceName error:error];
+			[self deleteItemForUsername:username serviceName:serviceName error:error];
 			
 			if ([*error code] != noErr) {
 				return NO;

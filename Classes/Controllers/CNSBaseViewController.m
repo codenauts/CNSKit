@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 #import "CNSBaseViewController.h"
-#import "CNSApplicationDelegate.h"
 
 @implementation CNSBaseViewController
 

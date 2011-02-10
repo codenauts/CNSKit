@@ -1,4 +1,4 @@
-@class CNSApplicationDelegate;
+@class CNS_APPLICATION_DELEGATE_CLASS;
 
 @interface CNSBaseViewController : UIViewController {
 }

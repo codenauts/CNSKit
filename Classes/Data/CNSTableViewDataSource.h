@@ -31,7 +31,7 @@
 
 - (UITableViewCell *)createCellWithStyle:(UITableViewCellStyle)style tableView:(UITableView *)tableView identifier:(NSString *)identifier;
 
-- (void)addTagsToCellTags:(NSInteger *)tags length:(NSInteger)length;
+- (void)addTagsToCellTags:(NSInteger *)tags length:(NSInteger)length title:(NSString *)title;
 - (void)createCellTags;
 
 @end

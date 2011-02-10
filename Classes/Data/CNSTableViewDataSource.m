@@ -40,19 +40,23 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
- 	return [[self.cellTags objectAtIndex:section] count];
+ 	return [[[self.cellTags objectAtIndex:section] valueForKey:@"rows"] count];
 }
 
 #pragma mark -
 #pragma mark Helper Methods
 
-- (void)addTagsToCellTags:(NSInteger *)tags length:(NSInteger)length {
+- (void)addTagsToCellTags:(NSInteger *)tags length:(NSInteger)length title:(NSString *)title {
 	NSMutableArray *array = [[NSMutableArray alloc] init];
 	for (NSInteger index = 0; index < length; index++) {
 		[array addObject:[NSNumber numberWithInt:tags[index]]];
 	}
-	
-	[self.cellTags addObject:array];
+
+	NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:0];
+	[dictionary setValue:array forKey:@"rows"];
+	[dictionary setValue:title forKey:@"title"];
+  [self.cellTags addObject:dictionary];
+  
 	[array release];
 }
 
@@ -69,7 +73,7 @@
 }
 
 - (NSInteger)tagForRowAtIndexPath:(NSIndexPath *)indexPath {
-	return [[[self.cellTags objectAtIndex:indexPath.section] objectAtIndex:indexPath.row] intValue];
+	return [[[[self.cellTags objectAtIndex:indexPath.section] valueForKey:@"rows"] objectAtIndex:indexPath.row] intValue];
 }
 
 - (NSString *)titleForTag:(NSInteger)tag localizationPrefix:(NSString *)prefix {

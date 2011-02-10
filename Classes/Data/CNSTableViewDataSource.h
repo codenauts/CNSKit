@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-@interface CNSTableViewDataSource : NSObject {
+@interface CNSTableViewDataSource : NSObject <UITableViewDataSource> {
 }
 
 @property (nonatomic, retain) NSMutableArray *cellTags;
@@ -26,12 +26,16 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 - (NSInteger)tagForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (NSInteger)tagForSectionAtIndex:(NSInteger)index;
 
 - (NSString *)titleForTag:(NSInteger)tag localizationPrefix:(NSString *)prefix;
+- (NSString *)titleForSectionAtIndex:(NSInteger)index;
 
 - (UITableViewCell *)createCellWithStyle:(UITableViewCellStyle)style tableView:(UITableView *)tableView identifier:(NSString *)identifier;
 
-- (void)addTagsToCellTags:(NSInteger *)tags length:(NSInteger)length title:(NSString *)title;
+- (void)addSectionWithoutTitleCellTags:(NSInteger *)tags length:(NSInteger)length;
+- (void)addSectionWithTitle:(NSString *)title sectionTag:(NSInteger)sectionTag cellTags:(NSInteger *)tags length:(NSInteger)length;
+
 - (void)createCellTags;
 
 @end

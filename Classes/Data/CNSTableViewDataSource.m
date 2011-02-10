@@ -22,6 +22,8 @@
 
 @implementation CNSTableViewDataSource
 
+@synthesize cellTags;
+
 #pragma mark -
 #pragma mark Initialization
 
@@ -43,11 +45,23 @@
  	return [[[self.cellTags objectAtIndex:section] valueForKey:@"rows"] count];
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+  return [self titleForSectionAtIndex:section];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+  return [self createCellWithStyle:UITableViewCellStyleDefault tableView:tableView identifier:@"DefaultDataSourceCell"];
+}
+
 #pragma mark -
 #pragma mark Helper Methods
 
-- (void)addTagsToCellTags:(NSInteger *)tags length:(NSInteger)length title:(NSString *)title {
-	NSMutableArray *array = [[NSMutableArray alloc] init];
+- (void)addSectionWithoutTitleCellTags:(NSInteger *)tags length:(NSInteger)length {
+  [self addSectionWithTitle:nil sectionTag:-1 cellTags:tags length:length];
+}
+
+- (void)addSectionWithTitle:(NSString *)title sectionTag:(NSInteger)sectionTag cellTags:(NSInteger *)tags length:(NSInteger)length {
+  NSMutableArray *array = [[NSMutableArray alloc] init];
 	for (NSInteger index = 0; index < length; index++) {
 		[array addObject:[NSNumber numberWithInt:tags[index]]];
 	}
@@ -55,6 +69,9 @@
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:0];
 	[dictionary setValue:array forKey:@"rows"];
 	[dictionary setValue:title forKey:@"title"];
+  if (sectionTag > -1) {
+    [dictionary setValue:[NSNumber numberWithInt:sectionTag] forKey:@"sectionTag"];
+  }
   [self.cellTags addObject:dictionary];
   
 	[array release];
@@ -78,6 +95,14 @@
 
 - (NSString *)titleForTag:(NSInteger)tag localizationPrefix:(NSString *)prefix {
   return NSLocalizedString(([NSString stringWithFormat:@"%@CellText%d", prefix, tag]), nil); 
+}
+
+- (NSString *)titleForSectionAtIndex:(NSInteger)index {
+  return [[self.cellTags objectAtIndex:index] valueForKey:@"title"];
+}
+
+- (NSInteger)tagForSectionAtIndex:(NSInteger)index {
+  return [[[self.cellTags objectAtIndex:index] valueForKey:@"sectionTag"] intValue];
 }
 
 #pragma mark -

@@ -32,6 +32,7 @@
 - (NSString *)titleForSectionAtIndex:(NSInteger)index;
 
 - (UITableViewCell *)createCellWithStyle:(UITableViewCellStyle)style tableView:(UITableView *)tableView identifier:(NSString *)identifier;
+- (UITableViewCell *)loadCellFromNibWithIdentifier:(NSString *)identifier tableView:(UITableView *)tableView;
 
 - (void)addSectionWithoutTitleCellTags:(NSInteger *)tags length:(NSInteger)length;
 - (void)addSectionWithTitle:(NSString *)title sectionTag:(NSInteger)sectionTag cellTags:(NSInteger *)tags length:(NSInteger)length;

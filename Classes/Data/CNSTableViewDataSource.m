@@ -89,6 +89,15 @@
 	self.cellTags = [[NSMutableArray alloc] initWithCapacity:0];
 }
 
+- (UITableViewCell *)loadCellFromNibWithIdentifier:(NSString *)identifier tableView:(UITableView *)tableView {
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+	if (!cell) {
+		NSArray *loadedNib = [[NSBundle mainBundle] loadNibNamed:identifier owner:self options:nil];
+		cell = [loadedNib objectAtIndex:0];
+	}
+	return cell;
+}
+
 - (NSInteger)tagForRowAtIndexPath:(NSIndexPath *)indexPath {
 	return [[[[self.cellTags objectAtIndex:indexPath.section] valueForKey:@"rows"] objectAtIndex:indexPath.row] intValue];
 }
@@ -98,7 +107,12 @@
 }
 
 - (NSString *)titleForSectionAtIndex:(NSInteger)index {
-  return [[self.cellTags objectAtIndex:index] valueForKey:@"title"];
+  if ((self.cellTags) && ([self.cellTags count] > index)) {
+    return [[self.cellTags objectAtIndex:index] valueForKey:@"title"];
+  }
+  else {
+    return nil;
+  }
 }
 
 - (NSInteger)tagForSectionAtIndex:(NSInteger)index {

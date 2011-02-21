@@ -77,6 +77,23 @@
 	[array release];
 }
 
+- (void)addSectionWithTitle:(NSString *)title sectionTag:(NSInteger)sectionTag uniqueCellTag:(NSInteger)uniqueCellTag count:(NSInteger)count {
+  NSMutableArray *array = [[NSMutableArray alloc] init];
+	for (NSInteger index = 0; index < count; index++) {
+		[array addObject:[NSNumber numberWithInt:uniqueCellTag]];
+	}
+  
+	NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:0];
+	[dictionary setValue:array forKey:@"rows"];
+	[dictionary setValue:title forKey:@"title"];
+  if (sectionTag > -1) {
+    [dictionary setValue:[NSNumber numberWithInt:sectionTag] forKey:@"sectionTag"];
+  }
+  [self.cellTags addObject:dictionary];
+  
+	[array release];
+}
+
 - (UITableViewCell *)createCellWithStyle:(UITableViewCellStyle)style tableView:(UITableView *)tableView identifier:(NSString *)identifier {
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
   if (!cell) {

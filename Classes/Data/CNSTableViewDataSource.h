@@ -36,6 +36,7 @@
 
 - (void)addSectionWithoutTitleCellTags:(NSInteger *)tags length:(NSInteger)length;
 - (void)addSectionWithTitle:(NSString *)title sectionTag:(NSInteger)sectionTag cellTags:(NSInteger *)tags length:(NSInteger)length;
+- (void)addSectionWithTitle:(NSString *)title sectionTag:(NSInteger)sectionTag uniqueCellTag:(NSInteger)uniqueCellTag count:(NSInteger)count;
 
 - (void)createCellTags;
 

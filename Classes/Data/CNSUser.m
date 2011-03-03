@@ -56,6 +56,7 @@
   email = newEmail;
   
   [[NSUserDefaults standardUserDefaults] setObject:email forKey:@"UserEmail"];
+  [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 // Return password from store
@@ -66,6 +67,7 @@
 // Set password at store
 - (void)setStoredPassword:(NSString *)newPassword {
 	[passwordStore setPassword:newPassword forUsername:self.email];
+  [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 // Set password store

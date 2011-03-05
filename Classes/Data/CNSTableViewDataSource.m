@@ -133,7 +133,12 @@
 }
 
 - (NSInteger)tagForSectionAtIndex:(NSInteger)index {
-  return [[[self.cellTags objectAtIndex:index] valueForKey:@"sectionTag"] intValue];
+  if ([self.cellTags count] > index) {
+    return [[[self.cellTags objectAtIndex:index] valueForKey:@"sectionTag"] intValue];
+  }
+  else {
+    return -1;
+  }
 }
 
 #pragma mark -

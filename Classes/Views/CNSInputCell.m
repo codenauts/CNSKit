@@ -22,6 +22,10 @@
 
 @implementation CNSInputCell
 
+@synthesize inputField;
+@synthesize prefixLabel;
+@synthesize titleLabel;
+
 - (void)dealloc {
   self.inputField = nil;
   self.prefixLabel = nil;

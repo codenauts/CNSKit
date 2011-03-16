@@ -23,9 +23,11 @@
 
 @implementation CNSUser
 
+@synthesize email;
+
 // Constructor
 - (id)init {
-  if (self = [super init]) {
+  if ((self = [super init])) {
     email = nil;
 		passwordStore = [[CNSPasswordStore alloc] init];
   }

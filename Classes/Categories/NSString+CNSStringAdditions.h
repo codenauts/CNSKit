@@ -26,4 +26,6 @@
 - (NSString *)URLDecodedString;
 - (NSString *)URLEncodedString;
 
+- (NSString *)MD5Hash;
+
 @end

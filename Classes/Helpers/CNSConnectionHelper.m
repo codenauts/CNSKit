@@ -31,7 +31,7 @@
 #pragma mark Initialization
 
 - (id)initWithRequest:(NSURLRequest *)request delegate:(id)aDelegate selector:(SEL)aSelector identifier:(NSString *)anIdentifier {
-  if (self = [super init]) {
+  if ((self = [super init])) {
     delegate = [aDelegate retain];
     selector = aSelector;
     
@@ -48,7 +48,7 @@
 }
 
 - (id)initWithURL:(NSURL *)url identifier:(NSString *)anIdentifier delegate:(id)aDelegate selector:(SEL)aSelector {
-  if (self = [super init]) {
+  if ((self = [super init])) {
     delegate = [aDelegate retain];
     selector = aSelector;
 		identifier = [anIdentifier copy];

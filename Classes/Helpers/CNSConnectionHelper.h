@@ -24,10 +24,12 @@
   NSString *identifier;
   NSURLConnection *connection;
   SEL selector;
+  NSInteger statusCode;
 }
 
 @property (retain, readonly) NSData *data;
 @property (copy, readonly) NSString *identifier;
+@property (assign, readonly) NSInteger statusCode;
 
 - (id)initWithRequest:(NSURLRequest *)request delegate:(id)aDelegate selector:(SEL)aSelector identifier:(NSString *)anIdentifier;
 

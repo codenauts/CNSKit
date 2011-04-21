@@ -26,6 +26,7 @@
 
 @synthesize data;
 @synthesize identifier;
+@synthesize statusCode;
 
 #pragma mark -
 #pragma mark Initialization
@@ -98,6 +99,9 @@
 
 - (void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)response {
 	[data setLength:0];
+  if ([response respondsToSelector:@selector(statusCode)]) {
+    statusCode = [((NSHTTPURLResponse *)response) statusCode];
+  }  
 }
 
 - (void)connection:(NSURLConnection *)aConnection didReceiveData:(NSData *)receivedData {

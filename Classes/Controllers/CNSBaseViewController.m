@@ -20,6 +20,12 @@
 
 #import "CNSBaseViewController.h"
 
+@interface CNSBaseViewController (Private)
+
+  - (void)simulateMemoryWarning;
+
+@end
+
 @implementation CNSBaseViewController
 
 #pragma mark -
@@ -29,6 +35,35 @@
   [super viewDidUnload];
   [self releaseView];
 }
+
+- (void) viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  
+  #if TARGET_IPHONE_SIMULATOR
+    #ifdef DEBUG
+      // If we are running in the simulator and it's the DEBUG target
+      // then simulate a memory warning. Note that the DEBUG flag isn't
+      // defined by default. To define it add this Preprocessor Macro for
+      // the Debug target: DEBUG=1
+      [self simulateMemoryWarning];
+    #endif
+  #endif
+}
+
+#pragma mark - Debugging Helper
+
+// Idea taken from iDev Recipes
+// Blog-Post: http://idevrecipes.com/2011/05/04/debugging-magic-auto-simulate-memory-warnings/
+// Gist: https://gist.github.com/956403
+
+- (void)simulateMemoryWarning {
+  #if TARGET_IPHONE_SIMULATOR
+    #ifdef DEBUG
+      CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"UISimulatedMemoryWarningNotification", NULL, NULL, true);
+    #endif
+  #endif
+}
+
 
 #pragma mark -
 #pragma mark Public Helper Methods

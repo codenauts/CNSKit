@@ -27,6 +27,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 - (NSInteger)tagForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (NSInteger)tagForSectionAtIndex:(NSInteger)index;
+- (NSInteger)indexForSectionTag:(NSInteger)tag;
 
 - (NSString *)titleForTag:(NSInteger)tag localizationPrefix:(NSString *)prefix;
 - (NSString *)titleForSectionAtIndex:(NSInteger)index;

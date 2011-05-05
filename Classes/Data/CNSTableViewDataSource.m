@@ -141,6 +141,17 @@
   }
 }
 
+- (NSInteger)indexForSectionTag:(NSInteger)tag {
+  NSInteger index = 0;
+  for (NSDictionary *section in self.cellTags) {
+    if ([[section valueForKey:@"sectionTag"] intValue] == tag) {
+      return index;
+    }
+    index++;
+  }
+  return -1;
+}
+
 #pragma mark -
 #pragma mark Memory Management Methods
 

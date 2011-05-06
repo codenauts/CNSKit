@@ -103,7 +103,7 @@
 }
 
 - (void)createCellTags {
-	self.cellTags = [[NSMutableArray alloc] initWithCapacity:0];
+	self.cellTags = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
 }
 
 - (UITableViewCell *)loadCellFromNibWithIdentifier:(NSString *)identifier tableView:(UITableView *)tableView {

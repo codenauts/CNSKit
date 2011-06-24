@@ -37,9 +37,16 @@
 // Set password from Keychain for service and username
 - (void)setPassword:(NSString *)password forUsername:(NSString *)username {
 	NSError *error;
-	if (![CNSKeychainUtils storeUsername:username password:password serviceName:[[[NSBundle mainBundle] infoDictionary] valueForKey:(NSString *)kCFBundleIdentifierKey] updateExisting:true error:&error]) {
-		CNSLog(@"Error occured while storing password: %@", [error userInfo]);
-	}
+  if (password) {
+    if (![CNSKeychainUtils storeUsername:username password:password serviceName:[[[NSBundle mainBundle] infoDictionary] valueForKey:(NSString *)kCFBundleIdentifierKey] updateExisting:true error:&error]) {
+      CNSLog(@"Error occured while storing password: %@", [error userInfo]);
+    }
+  }
+  else {
+    if (![CNSKeychainUtils deleteItemForUsername:username serviceName:[[[NSBundle mainBundle] infoDictionary] valueForKey:(NSString *)kCFBundleIdentifierKey] error:&error]) {
+      CNSLog(@"Error occured while deleting password: %@", [error userInfo]);
+    }
+  }
 }
 
 @end

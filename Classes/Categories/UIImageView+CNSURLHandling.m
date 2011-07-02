@@ -40,11 +40,18 @@ static char imageLoadingKey;
       UIImage *image = nil;
       
       NSString *filePath = [NSTemporaryDirectory() stringByAppendingFormat:@"%@",[newUrl MD5Hash]];
+      NSURL *imageURL = [NSURL URLWithString:newUrl];
+      
       if ([[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:nil]) {
         image = [[UIImage alloc] initWithContentsOfFile:filePath];
       }
+      else if ([[imageURL scheme] isEqualToString:@"file"]) {
+        NSData* imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
+        image = [[UIImage alloc] initWithData:imageData];
+        [imageData release];
+      }
       else {
-        NSData* imageData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:newUrl]];
+        NSData* imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
         image = [[UIImage alloc] initWithData:imageData];
         [imageData writeToFile:filePath atomically:YES];
         [imageData release];

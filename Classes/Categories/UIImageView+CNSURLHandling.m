@@ -18,6 +18,10 @@ static char imageLoadingKey;
 }
 
 - (void)setImageURL:(NSString *)newUrl {
+  [self setImageURL:newUrl completionBlock:nil];
+}
+
+- (void)setImageURL:(NSString *)newUrl completionBlock:(void (^)(UIImage *loadedImage))completionBlock {
   NSString *url = (NSString *)objc_getAssociatedObject(self, &imageURLKey);
   
   if (!([newUrl length] > 0)) {
@@ -60,6 +64,9 @@ static char imageLoadingKey;
       dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.imageURL isEqualToString:newUrl]) {
           self.image = image;
+          if (completionBlock) {
+            completionBlock(image);
+          }
         }
         [activityIndicator stopAnimating];
         [activityIndicator removeFromSuperview];

@@ -30,6 +30,7 @@
 @property (retain, readonly) NSData *data;
 @property (copy, readonly) NSString *identifier;
 @property (assign, readonly) NSInteger statusCode;
+@property (retain, readonly) NSError *lastError;
 
 - (id)initWithRequest:(NSURLRequest *)request delegate:(id)aDelegate selector:(SEL)aSelector identifier:(NSString *)anIdentifier;
 

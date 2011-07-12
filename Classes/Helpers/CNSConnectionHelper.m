@@ -22,11 +22,18 @@
 #import "CNSLogHelper.h"
 #import "NSString+CNSStringAdditions.h"
 
+@interface CNSConnectionHelper ()
+  
+@property (retain, readwrite) NSError *lastError;
+
+@end
+
 @implementation CNSConnectionHelper
 
 @synthesize data;
 @synthesize identifier;
 @synthesize statusCode;
+@synthesize lastError;
 
 #pragma mark -
 #pragma mark Initialization
@@ -117,6 +124,7 @@
 }
 
 - (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error {
+  self.lastError = error;
   if ([delegate respondsToSelector:@selector(connectionDidFail:)]) {
     [delegate performSelector:@selector(connectionDidFail:) withObject:self];
   }

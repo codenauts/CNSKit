@@ -1,5 +1,5 @@
 #import "CNSClassUtils.h"
-#import </usr/include/objc/objc-class.h>
+#import <objc/runtime.h>
 
 @implementation CNSClassUtils
 

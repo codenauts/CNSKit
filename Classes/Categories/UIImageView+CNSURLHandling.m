@@ -7,30 +7,28 @@
 static char imageURLKey;
 static char imageDefaultKey;
 static char imageLoadingKey;
-static char imageBufferKey;
-static char imageBufferEnabledKey;
+
+static BOOL cns_imageBufferEnabled;
+static NSMutableDictionary *cns_imageBuffer;
 
 
 + (void)cns_imageBufferEnabled:(BOOL)enabled {
-  objc_setAssociatedObject(self, &imageBufferEnabledKey, [NSNumber numberWithBool:enabled], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  cns_imageBufferEnabled = enabled;
 }
 
 + (BOOL)cns_isImageBufferEnabeld {
-  return [(NSNumber *)objc_getAssociatedObject(self, &imageBufferEnabledKey) boolValue];
+  return cns_imageBufferEnabled;
 }
 
 + (NSMutableDictionary *)cns_imageBuffer {
-  NSMutableDictionary *buffer = (NSMutableDictionary *)objc_getAssociatedObject(self, &imageBufferKey);
-  if (!buffer) {
-    buffer = [NSMutableDictionary dictionary];
-    objc_setAssociatedObject(self, &imageBufferKey, buffer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  if (!cns_imageBuffer) {
+    cns_imageBuffer = [[NSMutableDictionary alloc] init];
   }
-  return buffer;
+  return cns_imageBuffer;
 }
 
 + (void)cns_cleanupImageBuffer {
-  NSMutableDictionary *buffer = (NSMutableDictionary *)objc_getAssociatedObject(self, &imageBufferKey);
-  [buffer removeAllObjects];
+  [[UIImageView cns_imageBuffer] removeAllObjects];
 }
 
 - (void)setImageURL:(NSString *)newUrl {

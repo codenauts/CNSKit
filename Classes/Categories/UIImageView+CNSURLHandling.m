@@ -10,7 +10,7 @@ static char imageLoadingKey;
 
 static BOOL cns_imageBufferEnabled;
 static NSMutableDictionary *cns_imageBuffer;
-
+static NSString *cns_cachePath;
 
 + (void)cns_imageBufferEnabled:(BOOL)enabled {
   cns_imageBufferEnabled = enabled;
@@ -31,6 +31,20 @@ static NSMutableDictionary *cns_imageBuffer;
   [[UIImageView cns_imageBuffer] removeAllObjects];
 }
 
++ (void)cns_cachePath:(NSString *)path {
+  [path retain];
+  [cns_cachePath release];
+  cns_cachePath = path;
+  [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+}
+
++ (NSString *)cns_cachePath {
+  if (!cns_cachePath) {
+    cns_cachePath = [[NSTemporaryDirectory() stringByAppendingPathComponent:@"cns_imagebuffer"] retain];
+  }
+  return cns_cachePath;
+}
+
 - (void)setImageURL:(NSString *)newUrl {
   [self setImageURL:newUrl completionBlock:nil];
 }
@@ -45,6 +59,8 @@ static NSMutableDictionary *cns_imageBuffer;
   else if (!([url isEqualToString:newUrl])) {    
     self.image = nil;
 
+    objc_setAssociatedObject(self, &imageURLKey, newUrl, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
     NSString *md5Hash = [newUrl MD5Hash];
     if ([UIImageView cns_isImageBufferEnabeld]) {
       UIImage *cachedImage = [[UIImageView cns_imageBuffer] valueForKey:md5Hash];
@@ -63,13 +79,11 @@ static NSMutableDictionary *cns_imageBuffer;
       [self addSubview:activityIndicator];
       [activityIndicator startAnimating];
       
-      objc_setAssociatedObject(self, &imageURLKey, newUrl, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-      
       dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
         UIImage *image = nil;
         
-        NSString *filePath = [NSTemporaryDirectory() stringByAppendingFormat:@"%@",md5Hash];
+        NSString *filePath = [[UIImageView cns_cachePath] stringByAppendingPathComponent:md5Hash];
         NSURL *imageURL = [NSURL URLWithString:newUrl];
         
         if ([[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:nil]) {
@@ -87,7 +101,7 @@ static NSMutableDictionary *cns_imageBuffer;
           [imageData release];
         }
         
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_sync(dispatch_get_main_queue(), ^{
           if ([self.imageURL isEqualToString:newUrl]) {
             self.image = image;
             if ([UIImageView cns_isImageBufferEnabeld] && (image)) {

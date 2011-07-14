@@ -3,6 +3,8 @@
 
 + (void)cns_imageBufferEnabled:(BOOL)enabled;
 + (void)cns_cleanupImageBuffer;
++ (void)cns_cachePath:(NSString *)path;
++ (NSString *)cns_cachePath;
 
 - (void)setImageURL:(NSString *)url;
 - (NSString *)imageURL;

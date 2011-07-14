@@ -51,6 +51,9 @@ static NSMutableDictionary *cns_imageBuffer;
       if (cachedImage) {
         self.image = cachedImage;
       }
+      if (completionBlock) {
+        completionBlock(cachedImage);
+      }
     }
     
     if (!self.image) {

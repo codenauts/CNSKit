@@ -1,6 +1,7 @@
 @interface UIImageView (CNSURLHandling) {
 }
 
++ (void)cns_addDomainFilterWithRegEx:(NSString *)regex replaceWith:(NSString *)url;
 + (void)cns_imageBufferEnabled:(BOOL)enabled;
 + (void)cns_cleanupImageBuffer;
 + (void)cns_cachePath:(NSString *)path;

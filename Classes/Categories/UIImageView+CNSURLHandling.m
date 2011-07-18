@@ -10,6 +10,7 @@ static char imageLoadingKey;
 
 static BOOL cns_imageBufferEnabled;
 static NSMutableDictionary *cns_imageBuffer;
+static NSMutableDictionary *cns_domainFilter;
 static NSString *cns_cachePath;
 
 + (void)cns_imageBufferEnabled:(BOOL)enabled {
@@ -45,6 +46,17 @@ static NSString *cns_cachePath;
   return cns_cachePath;
 }
 
++ (NSMutableDictionary *)cns_domainFilter {
+  if (!cns_domainFilter) {
+    cns_domainFilter = [[NSMutableDictionary alloc] init];
+  }
+  return cns_domainFilter;
+}
+
++ (void)cns_addDomainFilterWithRegEx:(NSString *)regex replaceWith:(NSString *)url {
+  [[self cns_domainFilter] setValue:url forKey:regex];
+}
+
 - (void)setImageURL:(NSString *)newUrl {
   [self setImageURL:newUrl completionBlock:nil];
 }
@@ -61,7 +73,14 @@ static NSString *cns_cachePath;
 
     objc_setAssociatedObject(self, &imageURLKey, newUrl, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
-    NSString *md5Hash = [newUrl MD5Hash];
+    NSMutableString *hashableURL = [[newUrl mutableCopy] autorelease];
+    NSMutableDictionary *domainFilter = [[self class] cns_domainFilter];
+    for (NSString *key in domainFilter) {
+      [hashableURL replaceOccurrencesOfString:key withString:[cns_domainFilter valueForKey:key] options:NSRegularExpressionSearch range:NSMakeRange(0, [hashableURL length])];
+    }
+    
+    CNSLog(@"%@", hashableURL);
+    NSString *md5Hash = [hashableURL MD5Hash];
     if ([UIImageView cns_isImageBufferEnabeld]) {
       UIImage *cachedImage = [[UIImageView cns_imageBuffer] valueForKey:md5Hash];
       if (cachedImage) {

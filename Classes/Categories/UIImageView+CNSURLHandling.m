@@ -12,6 +12,7 @@ static BOOL cns_imageBufferEnabled;
 static NSCache *cns_imageBuffer;
 static NSMutableDictionary *cns_domainFilter;
 static NSString *cns_cachePath;
+static NSCache *cns_md5HashCache;
 
 + (void)cns_imageBufferEnabled:(BOOL)enabled {
   cns_imageBufferEnabled = enabled;
@@ -26,6 +27,13 @@ static NSString *cns_cachePath;
     cns_imageBuffer = [[NSCache alloc] init];
   }
   return cns_imageBuffer;
+}
+
++ (NSCache *)cns_md5HashCache {
+  if (!cns_md5HashCache) {
+    cns_md5HashCache = [[NSCache alloc] init];
+  }
+  return cns_md5HashCache;
 }
 
 + (void)cns_cleanupImageBuffer {
@@ -57,9 +65,19 @@ static NSString *cns_cachePath;
   [[self cns_domainFilter] setValue:url forKey:regex];
 }
 
-- (void)cns_loadCachedImageWithMD5Hash:(NSString *)md5Hash completionBlock:(void (^)(UIImage *loadedImage))completionBlock {
+- (NSString *)cns_MD5HashForURL:(NSString *)url {
+  NSString *md5Hash = [[UIImageView cns_md5HashCache] objectForKey:url];
+  if (!md5Hash) {
+    md5Hash = [url MD5Hash];
+    [[UIImageView cns_md5HashCache] setObject:md5Hash forKey:url];
+  }
+  return md5Hash;
+}
+
+- (void)cns_loadCachedImageWithURL:(NSString *)url completionBlock:(void (^)(UIImage *loadedImage))completionBlock {
   if ([UIImageView cns_isImageBufferEnabeld]) {
-    UIImage *cachedImage = [[UIImageView cns_imageBuffer] valueForKey:md5Hash];
+    NSString *md5Hash = [self cns_MD5HashForURL:url];
+    UIImage *cachedImage = [[UIImageView cns_imageBuffer] objectForKey:md5Hash];
     if (cachedImage) {
       self.image = cachedImage;
     }
@@ -69,20 +87,20 @@ static NSString *cns_cachePath;
   }
 }
 
-- (void)cns_loadImageFromURL:(NSString *)newUrl MD5Hash:(NSString *)md5Hash completionBlock:(void (^)(UIImage *loadedImage))completionBlock {
+- (void)cns_loadImageFromURL:(NSString *)url completionBlock:(void (^)(UIImage *loadedImage))completionBlock {
   self.image = [UIImage imageNamed:[self loadingImage]];
   UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
   activityIndicator.center = CGPointMake(self.frame.size.width/2,self.frame.size.height/2);
   [self addSubview:activityIndicator];
   [activityIndicator startAnimating];
   [activityIndicator release];
+  NSString *md5Hash = [self cns_MD5HashForURL:url];
   
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     
     UIImage *image = nil;
-    
     NSString *filePath = [[UIImageView cns_cachePath] stringByAppendingPathComponent:md5Hash];
-    NSURL *imageURL = [NSURL URLWithString:newUrl];
+    NSURL *imageURL = [NSURL URLWithString:url];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:nil]) {
       image = [[UIImage alloc] initWithContentsOfFile:filePath];
@@ -100,7 +118,7 @@ static NSString *cns_cachePath;
     }
     
     dispatch_sync(dispatch_get_main_queue(), ^{
-      if ([self.imageURL isEqualToString:newUrl]) {
+      if ([self.imageURL isEqualToString:url]) {
         self.image = image;
         if ([UIImageView cns_isImageBufferEnabeld] && (image)) {
           if ((image.size.width * image.size.height) <= 100000) {
@@ -132,8 +150,6 @@ static NSString *cns_cachePath;
   }
   else if (!([url isEqualToString:newUrl])) {    
     self.image = nil;
-
-    objc_setAssociatedObject(self, &imageURLKey, newUrl, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     NSMutableString *hashableURL = [[newUrl mutableCopy] autorelease];
     NSMutableDictionary *domainFilter = [[self class] cns_domainFilter];
@@ -141,12 +157,11 @@ static NSString *cns_cachePath;
       [hashableURL replaceOccurrencesOfString:key withString:[cns_domainFilter valueForKey:key] options:NSRegularExpressionSearch range:NSMakeRange(0, [hashableURL length])];
     }
     
-    CNSLog(@"%@", hashableURL);
-    NSString *md5Hash = [hashableURL MD5Hash];
-    [self cns_loadCachedImageWithMD5Hash:md5Hash completionBlock:completionBlock];
+    objc_setAssociatedObject(self, &imageURLKey, hashableURL, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self cns_loadCachedImageWithURL:hashableURL completionBlock:completionBlock];
     
     if (!self.image) {
-      [self cns_loadImageFromURL:newUrl MD5Hash:md5Hash completionBlock:completionBlock];
+      [self cns_loadImageFromURL:hashableURL completionBlock:completionBlock];
     }    
   }
 }

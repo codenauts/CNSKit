@@ -134,11 +134,12 @@ static NSString *cns_cachePath;
           }
           [activityIndicator stopAnimating];
           [activityIndicator removeFromSuperview];
-          [activityIndicator release];
         });
         
         [image release];
       });
+
+      [activityIndicator release];
     }
   }
 }

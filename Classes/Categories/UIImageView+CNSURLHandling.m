@@ -89,7 +89,7 @@ static NSCache *cns_md5HashCache;
 
 - (void)cns_loadImageFromURL:(NSString *)url completionBlock:(void (^)(UIImage *loadedImage))completionBlock {
   self.image = [UIImage imageNamed:[self loadingImage]];
-  UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+  __block UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
   activityIndicator.center = CGPointMake(self.frame.size.width/2,self.frame.size.height/2);
   [self addSubview:activityIndicator];
   [activityIndicator startAnimating];

@@ -168,6 +168,11 @@ static NSCache *cns_md5HashCache;
       [self cns_loadImageWithCompletionBlock:completionBlock];
     }    
   }
+  else {
+    if (completionBlock) {
+      completionBlock(self.image);
+    }
+  }
 }
 
 - (NSString *)imageURL {

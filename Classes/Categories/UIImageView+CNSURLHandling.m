@@ -1,5 +1,6 @@
 #import "UIImageView+CNSURLHandling.h"
 #import "NSString+CNSStringAdditions.h"
+#import "UIImage+CNSPreloading.h"
 #import <objc/runtime.h>
 
 @implementation UIImageView (CNSURLHandling)
@@ -119,23 +120,24 @@ static NSCache *cns_md5HashCache;
       [imageData release];
     }
     
+    UIImage *preLoadedImage = [image cns_preloadedImage];    
+    [image release];
+    
     dispatch_sync(dispatch_get_main_queue(), ^{
       if ([self.imageURL isEqualToString:url]) {
-        self.image = image;
-        if ([UIImageView cns_isImageBufferEnabeld] && (image)) {
-          if ((image.size.width * image.size.height) <= 100000) {
-            [[UIImageView cns_imageBuffer] setObject:image forKey:md5Hash];
+        self.image = preLoadedImage;
+        if ([UIImageView cns_isImageBufferEnabeld] && (preLoadedImage)) {
+          if ((preLoadedImage.size.width * preLoadedImage.size.height) <= 100000) {
+            [[UIImageView cns_imageBuffer] setObject:preLoadedImage forKey:md5Hash];
           }
         }
         if (completionBlock) {
-          completionBlock(image);
+          completionBlock(preLoadedImage);
         }
       }
       [activityIndicator stopAnimating];
       [activityIndicator removeFromSuperview];
     });
-    
-    [image release];
   });
 }
 

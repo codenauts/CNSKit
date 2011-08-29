@@ -152,6 +152,11 @@
   return -1;
 }
 
+- (NSInteger)rowForTag:(NSInteger)tag inSection:(NSInteger)section {
+  NSNumber *tagNumber = [NSNumber numberWithInt:tag];
+  return [[[self.cellTags objectAtIndex:section] valueForKey:@"rows"] indexOfObject:tagNumber];
+}
+
 #pragma mark -
 #pragma mark Memory Management Methods
 

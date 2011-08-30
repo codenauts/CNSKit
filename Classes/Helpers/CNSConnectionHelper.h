@@ -37,4 +37,6 @@
 - (id)initWithURL:(NSURL *)url delegate:(id)aDelegate selector:(SEL)aSelector;
 - (id)initWithURL:(NSURL *)url identifier:(NSString *)anIdentifier delegate:(id)aDelegate selector:(SEL)aSelector;
 
+- (void)cancel;
+
 @end

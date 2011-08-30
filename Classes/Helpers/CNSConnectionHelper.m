@@ -26,6 +26,8 @@
   
 @property (retain, readwrite) NSError *lastError;
 
+- (void)releaseConnection;
+
 @end
 
 @implementation CNSConnectionHelper
@@ -67,6 +69,12 @@
     connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];  
   }
   return self;
+}
+
+#pragma mark - Helper 
+
+- (void)cancel {
+  [connection cancel];
 }
 
 #pragma mark -

@@ -51,7 +51,10 @@ static NSCache *cns_md5HashCache;
 
 + (NSString *)cns_cachePath {
   if (!cns_cachePath) {
-    cns_cachePath = [[NSTemporaryDirectory() stringByAppendingPathComponent:@"cns_imagebuffer"] retain];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains( NSCachesDirectory, NSUserDomainMask ,YES );
+    NSString *cachesDirectory = [paths objectAtIndex:0];
+    cns_cachePath = [[cachesDirectory stringByAppendingPathComponent:@"cns_imagebuffer"] retain];
+    [[NSFileManager defaultManager] createDirectoryAtPath:cns_cachePath withIntermediateDirectories:YES attributes:nil error:nil];
   }
   return cns_cachePath;
 }

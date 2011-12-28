@@ -11,6 +11,7 @@
 - (NSString *)imageURL;
 - (NSString *)hashableImageURL;
 - (void)setImageURL:(NSString *)newUrl completionBlock:(void (^)(UIImage *loadedImage))block;
+- (void)setImageURL:(NSString *)newUrl processingBlock:(UIImage * (^)(UIImage * loadedImage))processingBlock completionBlock:(void (^)(UIImage *loadedImage))completionBlock;
 
 - (void)setDefaultImage:(NSString *)imageName;
 - (NSString *)defaultImage;

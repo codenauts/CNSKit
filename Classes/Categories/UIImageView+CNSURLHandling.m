@@ -51,7 +51,10 @@ static NSCache *cns_md5HashCache;
 
 + (NSString *)cns_cachePath {
   if (!cns_cachePath) {
-    cns_cachePath = [[NSTemporaryDirectory() stringByAppendingPathComponent:@"cns_imagebuffer"] retain];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains( NSCachesDirectory, NSUserDomainMask ,YES );
+    NSString *cachesDirectory = [paths objectAtIndex:0];
+    cns_cachePath = [[cachesDirectory stringByAppendingPathComponent:@"cns_imagebuffer"] retain];
+    [[NSFileManager defaultManager] createDirectoryAtPath:cns_cachePath withIntermediateDirectories:YES attributes:nil error:nil];
   }
   return cns_cachePath;
 }
@@ -89,7 +92,7 @@ static NSCache *cns_md5HashCache;
   }
 }
 
-- (void)cns_loadImageWithCompletionBlock:(void (^)(UIImage *loadedImage))completionBlock {
+- (void)cns_loadImageWithCompletionBlock:(void (^)(UIImage *loadedImage))completionBlock processingBlock:(UIImage * (^)(UIImage * loadedImage))processingBlock {
   self.image = [UIImage imageNamed:[self loadingImage]];
   __block UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
   activityIndicator.center = CGPointMake(self.frame.size.width/2,self.frame.size.height/2);
@@ -120,7 +123,14 @@ static NSCache *cns_md5HashCache;
       [imageData release];
     }
     
-    UIImage *preLoadedImage = [image cns_preloadedImage];    
+    UIImage *preLoadedImage = nil;
+    if (processingBlock) {
+      UIImage *processedImage = processingBlock(image);
+      preLoadedImage = [processedImage cns_preloadedImage];
+    }
+    else {
+      preLoadedImage = [image cns_preloadedImage];      
+    }
     [image release];
     
     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -141,11 +151,19 @@ static NSCache *cns_md5HashCache;
   });
 }
 
+- (void)cns_loadImageWithCompletionBlock:(void (^)(UIImage *loadedImage))completionBlock {
+  [self cns_loadImageWithCompletionBlock:completionBlock processingBlock:nil];
+}
+
 - (void)setImageURL:(NSString *)newUrl {
-  [self setImageURL:newUrl completionBlock:nil];
+  [self setImageURL:newUrl processingBlock:nil completionBlock:nil];
 }
 
 - (void)setImageURL:(NSString *)newUrl completionBlock:(void (^)(UIImage *loadedImage))completionBlock {
+  [self setImageURL:newUrl processingBlock:nil completionBlock:completionBlock];
+}
+
+- (void)setImageURL:(NSString *)newUrl processingBlock:(UIImage * (^)(UIImage * loadedImage))processingBlock completionBlock:(void (^)(UIImage *loadedImage))completionBlock { 
   NSString *url = (NSString *)objc_getAssociatedObject(self, &imageURLKey);
   
   if (!([newUrl length] > 0)) {
@@ -167,7 +185,7 @@ static NSCache *cns_md5HashCache;
     [self cns_loadCachedImageWithCompletionBlock:completionBlock];
     
     if (!self.image) {
-      [self cns_loadImageWithCompletionBlock:completionBlock];
+      [self cns_loadImageWithCompletionBlock:completionBlock processingBlock:processingBlock];
     }    
   }
   else {

@@ -59,7 +59,7 @@ static char base64EncodingTable[64] = {
 }
 
 + (NSString *)URLEncodedStringFromString:(NSString *)string {
-	NSString *encoded = (NSString *) CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)string, NULL, CFSTR(":/?#[]@!$&’()*+,;="), kCFStringEncodingUTF8);
+	NSString *encoded = (NSString *) CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)string, NULL, CFSTR(":/?#[]@!$&’()*+,;='"), kCFStringEncodingUTF8);
 	return [encoded autorelease];
 }
 

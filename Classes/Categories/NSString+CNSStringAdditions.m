@@ -40,6 +40,24 @@ static char base64EncodingTable[64] = {
   return result;  
 }
 
+// Thanks to: http://stackoverflow.com/a/5410443
+- (NSDictionary *)dictionaryFromURLQuery {
+  NSMutableDictionary *queryComponents = [NSMutableDictionary dictionary];
+  for(NSString *keyValuePairString in [self componentsSeparatedByString:@"&"]) {
+    NSArray *keyValuePairArray = [keyValuePairString componentsSeparatedByString:@"="];
+    if ([keyValuePairArray count] < 2) continue; // Verify that there is at least one key, and at least one value.  Ignore extra = signs
+    NSString *key = [[keyValuePairArray objectAtIndex:0] URLDecodedString];
+    NSString *value = [[keyValuePairArray objectAtIndex:1] URLDecodedString];
+    NSMutableArray *results = [queryComponents objectForKey:key]; // URL spec says that multiple values are allowed per key
+    if(!results) { // First object
+      results = [NSMutableArray arrayWithCapacity:1];
+      [queryComponents setObject:results forKey:key];
+    }
+    [results addObject:value];
+  }
+  return queryComponents;
+}
+
 + (NSString *)URLEncodedStringFromString:(NSString *)string {
 	NSString *encoded = (NSString *) CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)string, NULL, CFSTR(":/?#[]@!$&’()*+,;="), kCFStringEncodingUTF8);
 	return [encoded autorelease];

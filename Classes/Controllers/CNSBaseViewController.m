@@ -59,7 +59,12 @@
 - (void)simulateMemoryWarning {
   #if TARGET_IPHONE_SIMULATOR
     #ifdef DEBUG
-      CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"UISimulatedMemoryWarningNotification", NULL, NULL, true);
+  SEL memoryWarningSel = @selector(_performMemoryWarning);
+  if ([[UIApplication sharedApplication] respondsToSelector:memoryWarningSel]) {
+    [[UIApplication sharedApplication] performSelector:memoryWarningSel];
+  } else {
+    NSLog(@"%@",@"Whoops UIApplication no loger responds to -_performMemoryWarning");
+  }
     #endif
   #endif
 }

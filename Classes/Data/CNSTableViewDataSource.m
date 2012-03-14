@@ -73,8 +73,6 @@
     [dictionary setValue:[NSNumber numberWithInt:sectionTag] forKey:@"sectionTag"];
   }
   [self.cellTags addObject:dictionary];
-  
-	[array release];
 }
 
 - (void)addSectionWithTitle:(NSString *)title sectionTag:(NSInteger)sectionTag uniqueCellTag:(NSInteger)uniqueCellTag count:(NSInteger)count {
@@ -90,20 +88,18 @@
     [dictionary setValue:[NSNumber numberWithInt:sectionTag] forKey:@"sectionTag"];
   }
   [self.cellTags addObject:dictionary];
-  
-	[array release];
 }
 
 - (UITableViewCell *)createCellWithStyle:(UITableViewCellStyle)style tableView:(UITableView *)tableView identifier:(NSString *)identifier {
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
   if (!cell) {
-    cell = [[[UITableViewCell alloc] initWithStyle:style reuseIdentifier:identifier] autorelease];
+    cell = [[UITableViewCell alloc] initWithStyle:style reuseIdentifier:identifier];
   }
   return cell;
 }
 
 - (void)createCellTags {
-	self.cellTags = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+	self.cellTags = [[NSMutableArray alloc] initWithCapacity:0];
 }
 
 - (UITableViewCell *)loadCellFromNibWithIdentifier:(NSString *)identifier tableView:(UITableView *)tableView {
@@ -162,7 +158,6 @@
 
 - (void)dealloc {
 	self.cellTags = nil;
-	[super dealloc];
 }
 
 @end

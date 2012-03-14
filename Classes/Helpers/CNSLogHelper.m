@@ -31,8 +31,6 @@
 	va_end(argList);
 	
 	NSLog(@"%@", [NSString stringWithFormat:@"%@ (%d): %@", [pathString lastPathComponent], line, formattedString]);
-	[formattedString release];
-	[pathString release];
 }
 
 @end

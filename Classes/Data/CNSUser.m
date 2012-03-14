@@ -53,8 +53,6 @@
 
 // Set email
 - (void)setEmail:(NSString *)newEmail {
-  [newEmail retain];
-  [email release];
   email = newEmail;
   
   [[NSUserDefaults standardUserDefaults] setObject:email forKey:@"UserEmail"];
@@ -74,16 +72,12 @@
 
 // Set password store
 - (void)setPasswordStore:(CNSPasswordStore *)aPasswordStore {
-	[aPasswordStore retain];
-	[passwordStore retain];
 	passwordStore = aPasswordStore;
 }
 
 // Dealloc
 - (void) dealloc {
   self.email = nil;
-	[passwordStore release];
-	[super dealloc];
 }
 
 @end

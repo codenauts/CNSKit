@@ -42,11 +42,11 @@
 
 - (id)initWithRequest:(NSURLRequest *)request delegate:(id)aDelegate selector:(SEL)aSelector identifier:(NSString *)anIdentifier {
   if ((self = [super init])) {
-    delegate = [aDelegate retain];
+    delegate = aDelegate;
     selector = aSelector;
     
     data = [[NSMutableData alloc] init];
-    identifier = [anIdentifier retain];
+    identifier = anIdentifier;
     
     connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];  
   }
@@ -59,7 +59,7 @@
 
 - (id)initWithURL:(NSURL *)url identifier:(NSString *)anIdentifier delegate:(id)aDelegate selector:(SEL)aSelector {
   if ((self = [super init])) {
-    delegate = [aDelegate retain];
+    delegate = aDelegate;
     selector = aSelector;
 		identifier = [anIdentifier copy];
     
@@ -81,22 +81,14 @@
 #pragma mark Memory Management Methods
 
 - (void)releaseConnection {
-  [delegate release];
-  delegate = nil;
-  
-  [connection release];
+  delegate = nil;  
   connection = nil;
 }
 
 - (void)dealloc {
-  [data release];
   data = nil;
 	
-	[identifier release];
-
-  [self releaseConnection];
-  
-  [super dealloc];
+  [self releaseConnection];  
 }
 
 #pragma mark -

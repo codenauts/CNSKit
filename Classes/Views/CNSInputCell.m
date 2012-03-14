@@ -30,7 +30,6 @@
   self.inputField = nil;
   self.prefixLabel = nil;
   self.titleLabel = nil;
-  [super dealloc];
 }
 
 @end

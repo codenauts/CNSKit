@@ -5,13 +5,19 @@
 
 + (void)checkDelegate:(id)delegate performSelector:(SEL)selector withObject:(id)object {
   if ([delegate respondsToSelector:selector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     [delegate performSelector:selector withObject:object];
+#pragma clang diagnostic pop    
   }
 }
 
 + (void)checkDelegate:(id)delegate performSelector:(SEL)selector withObject:(id)object1 withObject:(id)object2 {
   if ([delegate respondsToSelector:selector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     [delegate performSelector:selector withObject:object1 withObject:object2];
+#pragma clang diagnostic pop    
   }
 }
 

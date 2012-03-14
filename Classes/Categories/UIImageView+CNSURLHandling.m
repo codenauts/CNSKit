@@ -43,8 +43,6 @@ static NSCache *cns_md5HashCache;
 }
 
 + (void)cns_cachePath:(NSString *)path {
-  [path retain];
-  [cns_cachePath release];
   cns_cachePath = path;
   [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
 }
@@ -53,7 +51,7 @@ static NSCache *cns_md5HashCache;
   if (!cns_cachePath) {
     NSArray *paths = NSSearchPathForDirectoriesInDomains( NSCachesDirectory, NSUserDomainMask ,YES );
     NSString *cachesDirectory = [paths objectAtIndex:0];
-    cns_cachePath = [[cachesDirectory stringByAppendingPathComponent:@"cns_imagebuffer"] retain];
+    cns_cachePath = [cachesDirectory stringByAppendingPathComponent:@"cns_imagebuffer"];
     [[NSFileManager defaultManager] createDirectoryAtPath:cns_cachePath withIntermediateDirectories:YES attributes:nil error:nil];
   }
   return cns_cachePath;
@@ -94,11 +92,10 @@ static NSCache *cns_md5HashCache;
 
 - (void)cns_loadImageWithCompletionBlock:(void (^)(UIImage *loadedImage))completionBlock processingBlock:(UIImage * (^)(UIImage * loadedImage))processingBlock {
   self.image = [UIImage imageNamed:[self loadingImage]];
-  __block UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+  UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
   activityIndicator.center = CGPointMake(self.frame.size.width/2,self.frame.size.height/2);
   [self addSubview:activityIndicator];
   [activityIndicator startAnimating];
-  [activityIndicator release];
   NSString *md5Hash = [self cns_MD5HashForURL:self.hashableImageURL];
   NSString *url = self.imageURL;
   
@@ -114,13 +111,11 @@ static NSCache *cns_md5HashCache;
     else if ([[imageURL scheme] isEqualToString:@"file"]) {
       NSData* imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
       image = [[UIImage alloc] initWithData:imageData];
-      [imageData release];
     }
     else {
       NSData* imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
       image = [[UIImage alloc] initWithData:imageData];
       [imageData writeToFile:filePath atomically:YES];
-      [imageData release];
     }
     
     UIImage *preLoadedImage = nil;
@@ -131,7 +126,6 @@ static NSCache *cns_md5HashCache;
     else {
       preLoadedImage = [image cns_preloadedImage];      
     }
-    [image release];
     
     dispatch_sync(dispatch_get_main_queue(), ^{
       if ([UIImageView cns_isImageBufferEnabeld] && (preLoadedImage)) {
@@ -173,7 +167,7 @@ static NSCache *cns_md5HashCache;
   else if (!([url isEqualToString:newUrl])) {    
     self.image = nil;
     
-    NSMutableString *hashableURL = [[newUrl mutableCopy] autorelease];
+    NSMutableString *hashableURL = [newUrl mutableCopy];
     NSMutableDictionary *domainFilter = [[self class] cns_domainFilter];
     for (NSString *key in domainFilter) {
       [hashableURL replaceOccurrencesOfString:key withString:[cns_domainFilter valueForKey:key] options:NSRegularExpressionSearch range:NSMakeRange(0, [hashableURL length])];

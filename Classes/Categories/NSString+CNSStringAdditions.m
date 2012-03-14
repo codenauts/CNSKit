@@ -35,14 +35,13 @@ static char base64EncodingTable[64] = {
 }
 
 - (NSString *)URLDecodedString {
-  NSString *result = (NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (CFStringRef)self, CFSTR(""), kCFStringEncodingUTF8);
-  [result autorelease];
+  NSString *result = (__bridge_transfer NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (__bridge CFStringRef)self, CFSTR(""), kCFStringEncodingUTF8);
   return result;  
 }
 
 + (NSString *)URLEncodedStringFromString:(NSString *)string {
-	NSString *encoded = (NSString *) CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)string, NULL, CFSTR(":/?#[]@!$&’()*+,;='"), kCFStringEncodingUTF8);
-	return [encoded autorelease];
+	NSString *encoded = (__bridge_transfer NSString *) CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)string, NULL, CFSTR(":/?#[]@!$&’()*+,;='"), kCFStringEncodingUTF8);
+	return encoded;
 }
 
 + (NSString *)base64StringFromData:(NSData *)data length:(int)length {

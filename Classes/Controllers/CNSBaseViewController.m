@@ -80,7 +80,6 @@
 
 - (void)dealloc {
   [self releaseView];
-  [super dealloc];
 }
 
 @end

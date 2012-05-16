@@ -28,7 +28,7 @@ static NSCache *cns_md5HashCache;
   static dispatch_semaphore_t semaphore;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    semaphore = dispatch_semaphore_create(0);
+    semaphore = dispatch_semaphore_create(1);
   });
   return semaphore;
 }

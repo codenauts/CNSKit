@@ -24,6 +24,15 @@ static NSCache *cns_md5HashCache;
   return cns_imageBufferEnabled;
 }
 
++ (dispatch_semaphore_t)cns_imageBufferWriteSemaphore {
+  static dispatch_semaphore_t semaphore;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    semaphore = dispatch_semaphore_create(0);
+  });
+  return semaphore;
+}
+
 + (NSCache *)cns_imageBuffer {
   if (!cns_imageBuffer) {
     cns_imageBuffer = [[NSCache alloc] init];
@@ -119,7 +128,9 @@ static NSCache *cns_md5HashCache;
     else {
       NSData* imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
       image = [[UIImage alloc] initWithData:imageData];
+      dispatch_semaphore_wait([UIImageView cns_imageBufferWriteSemaphore], DISPATCH_TIME_FOREVER);
       [imageData writeToFile:filePath atomically:YES];
+      dispatch_semaphore_signal([UIImageView cns_imageBufferWriteSemaphore]);
       [imageData release];
     }
     

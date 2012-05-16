@@ -4,6 +4,7 @@
 + (void)cns_addDomainFilterWithRegEx:(NSString *)regex replaceWith:(NSString *)url;
 + (void)cns_imageBufferEnabled:(BOOL)enabled;
 + (void)cns_cleanupImageBuffer;
++ (dispatch_semaphore_t)cns_imageBufferWriteSemaphore;
 + (void)cns_cachePath:(NSString *)path;
 + (NSString *)cns_cachePath;
 

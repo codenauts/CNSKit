@@ -50,6 +50,11 @@
   #endif
 }
 
+- (void)didReceiveMemoryWarning {
+  [super didReceiveMemoryWarning];
+  [self releaseView];
+}
+
 #pragma mark - Debugging Helper
 
 // Idea taken from iDev Recipes

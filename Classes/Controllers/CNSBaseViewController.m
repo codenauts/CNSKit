@@ -51,8 +51,8 @@
 }
 
 - (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
   [self releaseView];
+  [super didReceiveMemoryWarning];
 }
 
 #pragma mark - Debugging Helper

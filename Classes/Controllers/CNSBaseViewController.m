@@ -50,13 +50,6 @@
   #endif
 }
 
-- (void)didReceiveMemoryWarning {
-  if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0 &&  [self isViewLoaded] && ![[self view] window]){
-    [self releaseView];
-  }
-    [super didReceiveMemoryWarning];
-}
-
 #pragma mark - Debugging Helper
 
 // Idea taken from iDev Recipes

@@ -33,7 +33,6 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
-  [self releaseView];
 }
 
 - (void) viewDidAppear:(BOOL)animated {

@@ -22,5 +22,6 @@
 
 - (NSArray *)map: (id (^)(id obj))block;
 - (NSArray *)select: (BOOL (^)(id obj))block;
+- (NSArray *)reversedArray;
 
 @end

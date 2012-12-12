@@ -5,4 +5,4 @@ CNSKit is a collection of classes and collections that make life as a iOS develo
 Licence
 -----------
 
-See the [licence file](https://github.com/codenauts/CNSKit/blob/master/LICENSE).  
+See the [licence file](https://github.com/codenauts/CNSKit/blob/master/LICENSE.md).  

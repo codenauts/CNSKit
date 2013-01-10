@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.authors   = { 'Thomas Dohmke' => 'thomas.dohmke@codenauts.de' , 'Stefan Haubold' => 'stefan.haubold@codenauts.de', 'Benjamin Reimold' => 'benjamin.reimold@codenauts.de'}
   s.platform     = :ios
   s.ios.frameworks     =  'Security'
-  s.source   = { :git => 'https://github.com/codenauts/CNSKit.git', :tag => 'v1.0.4'}
+  s.source   = { :git => 'https://github.com/codenauts/CNSKit.git', :tag => 'v1.0.5'}
   s.source_files = 'Classes', 'Classes/**/*.{h,m}'
   s.resources = 'Resources/*'
 end

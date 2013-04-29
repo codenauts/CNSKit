@@ -124,7 +124,7 @@
 }
 
 - (NSString *)titleForSectionAtIndex:(NSInteger)index {
-  if ((self.cellTags) && ([self.cellTags count] > index)) {
+  if ((self.cellTags) && (((NSInteger)[self.cellTags count]) > index)) {
     return [[self.cellTags objectAtIndex:index] valueForKey:@"title"];
   }
   else {
@@ -133,7 +133,7 @@
 }
 
 - (NSInteger)tagForSectionAtIndex:(NSInteger)index {
-  if ([self.cellTags count] > index) {
+  if (((NSInteger)[self.cellTags count]) > index) {
     return [[[self.cellTags objectAtIndex:index] valueForKey:@"sectionTag"] intValue];
   }
   else {

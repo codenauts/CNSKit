@@ -94,9 +94,9 @@ static NSCache *cns_md5HashCache;
     UIImage *cachedImage = [[UIImageView cns_imageBuffer] objectForKey:md5Hash];
     if (cachedImage) {
       self.image = cachedImage;
-    }
-    if (completionBlock) {
-      completionBlock(cachedImage);
+      if (completionBlock) {
+        completionBlock(cachedImage);
+      }
     }
   }
 }

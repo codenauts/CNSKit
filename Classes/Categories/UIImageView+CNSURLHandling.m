@@ -181,7 +181,7 @@ static NSCache *cns_md5HashCache;
     objc_setAssociatedObject(self, &imageURLKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     self.image = [UIImage imageNamed:[self defaultImage]];
   }
-  else if (!([url isEqualToString:newUrl])) {    
+  else if (!(self.image) || !([url isEqualToString:newUrl])) {
     self.image = nil;
     
     NSMutableString *hashableURL = [[newUrl mutableCopy] autorelease];

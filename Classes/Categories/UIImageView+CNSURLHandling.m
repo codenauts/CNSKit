@@ -144,7 +144,7 @@ static NSCache *cns_md5HashCache;
     }
     [image release];
     
-    dispatch_sync(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
       if ([UIImageView cns_isImageBufferEnabeld] && (preLoadedImage)) {
         if ((preLoadedImage.size.width * preLoadedImage.size.height) <= 100000) {
           [[UIImageView cns_imageBuffer] setObject:preLoadedImage forKey:md5Hash];

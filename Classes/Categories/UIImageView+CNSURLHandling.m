@@ -5,10 +5,11 @@
 
 @implementation UIImageView (CNSURLHandling)
 
-static char imageURLKey;
-static char imageDefaultKey;
-static char imageLoadingKey;
-static char hashableImageURLKey;
+static char cns_imageURLKey;
+static char cns_imageDefaultKey;
+static char cns_imageLoadingKey;
+static char cns_hashableImageURLKey;
+static char cns_requestOperationKey;
 
 static BOOL cns_imageBufferEnabled;
 static NSCache *cns_imageBuffer;
@@ -22,6 +23,25 @@ static NSCache *cns_md5HashCache;
 
 + (BOOL)cns_isImageBufferEnabeld {
   return cns_imageBufferEnabled;
+}
+
+- (NSBlockOperation *)cns_imageRequestOperation {
+  return (NSBlockOperation *)objc_getAssociatedObject(self, &cns_requestOperationKey);
+}
+
+- (void)cns_setImageRequestOperation:(NSBlockOperation *)imageRequestOperation {
+  objc_setAssociatedObject(self, &cns_requestOperationKey, imageRequestOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (NSOperationQueue *)cns_imageRequestOperationQueue {
+  static NSOperationQueue *imageRequestOperationQueue = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    imageRequestOperationQueue = [[NSOperationQueue alloc] init];
+    [imageRequestOperationQueue setMaxConcurrentOperationCount:10];
+  });
+  
+  return imageRequestOperationQueue;
 }
 
 + (dispatch_semaphore_t)cns_imageBufferWriteSemaphore {
@@ -79,6 +99,11 @@ static NSCache *cns_md5HashCache;
   [[self cns_domainFilter] setValue:url forKey:regex];
 }
 
+- (void)cns_cancelImageRequestOperation {
+  [[self cns_imageRequestOperation] cancel];
+  [self cns_setImageRequestOperation:nil];
+}
+
 - (NSString *)cns_MD5HashForURL:(NSString *)url {
   NSString *md5Hash = [[UIImageView cns_md5HashCache] objectForKey:url];
   if (!md5Hash) {
@@ -102,6 +127,8 @@ static NSCache *cns_md5HashCache;
 }
 
 - (void)cns_loadImageWithCompletionBlock:(void (^)(UIImage *loadedImage))completionBlock processingBlock:(UIImage * (^)(UIImage * loadedImage))processingBlock {
+  [self cns_cancelImageRequestOperation];
+  
   self.image = [UIImage imageNamed:[self loadingImage]];
   __block UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
   activityIndicator.center = CGPointMake(self.frame.size.width/2,self.frame.size.height/2);
@@ -111,8 +138,8 @@ static NSCache *cns_md5HashCache;
   NSString *md5Hash = [self cns_MD5HashForURL:self.hashableImageURL];
   NSString *url = self.imageURL;
   
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    
+  
+  NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
     UIImage *image = nil;
     NSString *filePath = [[UIImageView cns_cachePath] stringByAppendingPathComponent:md5Hash];
     NSURL *imageURL = [NSURL URLWithString:url];
@@ -140,7 +167,7 @@ static NSCache *cns_md5HashCache;
       preLoadedImage = [processedImage cns_preloadedImage];
     }
     else {
-      preLoadedImage = [image cns_preloadedImage];      
+      preLoadedImage = [image cns_preloadedImage];
     }
     [image release];
     
@@ -159,7 +186,9 @@ static NSCache *cns_md5HashCache;
       [activityIndicator stopAnimating];
       [activityIndicator removeFromSuperview];
     });
-  });
+  }];
+  [[[self class] cns_imageRequestOperationQueue] addOperation:operation];
+  [self cns_setImageRequestOperation:operation];
 }
 
 - (void)cns_loadImageWithCompletionBlock:(void (^)(UIImage *loadedImage))completionBlock {
@@ -175,10 +204,10 @@ static NSCache *cns_md5HashCache;
 }
 
 - (void)setImageURL:(NSString *)newUrl processingBlock:(UIImage * (^)(UIImage * loadedImage))processingBlock completionBlock:(void (^)(UIImage *loadedImage))completionBlock { 
-  NSString *url = (NSString *)objc_getAssociatedObject(self, &imageURLKey);
+  NSString *url = (NSString *)objc_getAssociatedObject(self, &cns_imageURLKey);
   
   if (!([newUrl length] > 0)) {
-    objc_setAssociatedObject(self, &imageURLKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &cns_imageURLKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     self.image = [UIImage imageNamed:[self defaultImage]];
   }
   else if (!(self.image) || !([url isEqualToString:newUrl])) {
@@ -190,8 +219,8 @@ static NSCache *cns_md5HashCache;
       [hashableURL replaceOccurrencesOfString:key withString:[cns_domainFilter valueForKey:key] options:NSRegularExpressionSearch range:NSMakeRange(0, [hashableURL length])];
     }
     
-    objc_setAssociatedObject(self, &imageURLKey, newUrl, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    objc_setAssociatedObject(self, &hashableImageURLKey, hashableURL, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &cns_imageURLKey, newUrl, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &cns_hashableImageURLKey, hashableURL, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     [self cns_loadCachedImageWithCompletionBlock:completionBlock];
     
@@ -207,27 +236,27 @@ static NSCache *cns_md5HashCache;
 }
 
 - (NSString *)imageURL {
-  return (NSString *)objc_getAssociatedObject(self, &imageURLKey);
+  return (NSString *)objc_getAssociatedObject(self, &cns_imageURLKey);
 }
 
 - (NSString *)hashableImageURL {
-  return (NSString *)objc_getAssociatedObject(self, &hashableImageURLKey);
+  return (NSString *)objc_getAssociatedObject(self, &cns_hashableImageURLKey);
 }
 
 - (void)setDefaultImage:(NSString *)imageName {
-  objc_setAssociatedObject(self, &imageDefaultKey, imageName, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  objc_setAssociatedObject(self, &cns_imageDefaultKey, imageName, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSString *)defaultImage {
-  return (NSString *)objc_getAssociatedObject(self, &imageDefaultKey);
+  return (NSString *)objc_getAssociatedObject(self, &cns_imageDefaultKey);
 }
 
 - (void)setLoadingImage:(NSString *)imageName {
-  objc_setAssociatedObject(self, &imageLoadingKey, imageName, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  objc_setAssociatedObject(self, &cns_imageLoadingKey, imageName, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSString *)loadingImage {
-  return (NSString *)objc_getAssociatedObject(self, &imageLoadingKey);
+  return (NSString *)objc_getAssociatedObject(self, &cns_imageLoadingKey);
 }
 
 

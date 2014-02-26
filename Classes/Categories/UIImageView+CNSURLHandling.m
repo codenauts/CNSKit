@@ -183,10 +183,19 @@ static NSCache *cns_md5HashCache;
           completionBlock(preLoadedImage);
         }
       }
-      [activityIndicator stopAnimating];
-      [activityIndicator removeFromSuperview];
     });
   }];
+  
+  [operation setCompletionBlock:^{
+    dispatch_async(dispatch_get_main_queue(), ^{
+      for (UIView *view in [self subviews]) {
+        if ([view isKindOfClass:[UIActivityIndicatorView class]]) {
+          [view removeFromSuperview];
+        }
+      }
+    });
+  }];
+  
   [[[self class] cns_imageRequestOperationQueue] addOperation:operation];
   [self cns_setImageRequestOperation:operation];
 }

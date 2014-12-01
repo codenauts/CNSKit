@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'CNSKit'
-  s.version  = '1.0.9'
+  s.version  = '1.0.10'
   s.license = 'Own'
   s.summary  = 'CNSKit is a collection of utility-classes that make the life easier.'
   s.homepage = 'https://github.com/codenauts/CNSKit'
@@ -10,4 +10,5 @@ Pod::Spec.new do |s|
   s.source   = { :git => 'https://github.com/codenauts/CNSKit.git', :tag => 'v1.0.9'}
   s.source_files = 'Classes', 'Classes/**/*.{h,m}'
   s.resources = 'Resources/*'
+  s.requires_arc = false 
 end

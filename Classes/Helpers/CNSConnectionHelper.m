@@ -124,18 +124,23 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
   if ([delegate respondsToSelector:@selector(connectionDidFail:)]) {
     [delegate performSelector:@selector(connectionDidFail:) withObject:self];
   }
-
+#pragma clang diagnostic pop
   [self releaseConnection];
 }
 
 - (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error {
   self.lastError = error;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
   if ([delegate respondsToSelector:@selector(connectionDidFail:)]) {
     [delegate performSelector:@selector(connectionDidFail:) withObject:self];
   }
+#pragma clang diagnostic pop
   
   [self releaseConnection];
 }

@@ -3,7 +3,7 @@
 @implementation UILabel (CNSLabelResize)
 
 - (void)resizeLabelToFitText {
-  CGSize size = [self.text sizeWithFont:self.font constrainedToSize:CGSizeMake(self.bounds.size.width, 1e4) lineBreakMode:UILineBreakModeWordWrap];
+  CGSize size = [self.text sizeWithFont:self.font constrainedToSize:CGSizeMake(self.bounds.size.width, 1e4) lineBreakMode:NSLineBreakByWordWrapping];
   CGRect frame = self.frame;
   frame.size.height = (self.text ? size.height : 0);
   self.frame = frame;  

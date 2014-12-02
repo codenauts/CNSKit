@@ -63,14 +63,14 @@
 - (void)addSectionWithTitle:(NSString *)title sectionTag:(NSInteger)sectionTag cellTags:(NSInteger *)tags length:(NSInteger)length {
   NSMutableArray *array = [[NSMutableArray alloc] init];
 	for (NSInteger index = 0; index < length; index++) {
-		[array addObject:[NSNumber numberWithInt:tags[index]]];
+		[array addObject:[NSNumber numberWithInteger:tags[index]]];
 	}
 
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:0];
 	[dictionary setValue:array forKey:@"rows"];
 	[dictionary setValue:title forKey:@"title"];
   if (sectionTag > -1) {
-    [dictionary setValue:[NSNumber numberWithInt:sectionTag] forKey:@"sectionTag"];
+    [dictionary setValue:[NSNumber numberWithInteger:sectionTag] forKey:@"sectionTag"];
   }
   [self.cellTags addObject:dictionary];
   
@@ -80,14 +80,14 @@
 - (void)addSectionWithTitle:(NSString *)title sectionTag:(NSInteger)sectionTag uniqueCellTag:(NSInteger)uniqueCellTag count:(NSInteger)count {
   NSMutableArray *array = [[NSMutableArray alloc] init];
 	for (NSInteger index = 0; index < count; index++) {
-		[array addObject:[NSNumber numberWithInt:uniqueCellTag]];
+		[array addObject:[NSNumber numberWithInteger:uniqueCellTag]];
 	}
   
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:0];
 	[dictionary setValue:array forKey:@"rows"];
 	[dictionary setValue:title forKey:@"title"];
   if (sectionTag > -1) {
-    [dictionary setValue:[NSNumber numberWithInt:sectionTag] forKey:@"sectionTag"];
+    [dictionary setValue:[NSNumber numberWithInteger:sectionTag] forKey:@"sectionTag"];
   }
   [self.cellTags addObject:dictionary];
   
@@ -120,7 +120,7 @@
 }
 
 - (NSString *)titleForTag:(NSInteger)tag localizationPrefix:(NSString *)prefix {
-  return NSLocalizedString(([NSString stringWithFormat:@"%@CellText%d", prefix, tag]), nil); 
+  return NSLocalizedString(([NSString stringWithFormat:@"%@CellText%ld", prefix, (long)tag]), nil); 
 }
 
 - (NSString *)titleForSectionAtIndex:(NSInteger)index {
@@ -153,7 +153,7 @@
 }
 
 - (NSInteger)rowForTag:(NSInteger)tag inSection:(NSInteger)section {
-  NSNumber *tagNumber = [NSNumber numberWithInt:tag];
+  NSNumber *tagNumber = [NSNumber numberWithInteger:tag];
   return [[[self.cellTags objectAtIndex:section] valueForKey:@"rows"] indexOfObject:tagNumber];
 }
 
